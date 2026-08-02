@@ -1,0 +1,25 @@
+{
+  "name": "earnest-escrow",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Transparent real estate earnest money escrow built on Stellar Claimable Balances",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "demo:claim": "ts-node src/scripts/demo-successful-claim.ts",
+    "demo:reclaim": "ts-node src/scripts/demo-reclaim-after-deadline.ts",
+    "test": "node --test --require ts-node/register test/**/*.test.ts"
+  },
+  "dependencies": {
+    "@stellar/stellar-sdk": "^16.2.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  }
+}

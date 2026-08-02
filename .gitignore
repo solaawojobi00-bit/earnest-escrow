@@ -1,0 +1,29 @@
+# Local working instructions - never tracked
+CLAUDE.md
+.claude/
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Env / secrets
+.env
+.env.local
+
+# Runtime data
+data/*.json
+!data/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
