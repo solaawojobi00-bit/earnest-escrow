@@ -60,10 +60,14 @@ Justification:
   open-source contributors of any option realistically available here,
   which matters directly for this repo's purpose: generating a backlog that
   contributors can actually pick up.
-- **Horizon SSE streaming is a natural fit for Node's event-driven I/O** —
-  the monitor service in Phase 1 uses Horizon's streaming endpoint
-  (`.stream()`) rather than polling in a loop, so watching a balance for a
-  state change is cheap and near-real-time.
+- **Async/await maps cleanly onto Horizon's request/response API** — the
+  monitor in Phase 1 polls `GET /claimable_balances/{id}` on an interval.
+  Horizon's SSE streams are collection-level (new balances, payments,
+  effects) and don't emit a "balance closed" event for a specific balance
+  ID, so polling the single-resource endpoint is the correct mechanism for
+  "does this balance still exist," not a fallback. Effects-stream-based
+  push notification (`claimable_balance_claimed` effects) is a Phase 2+
+  optimization once multiple deals need low-latency updates concurrently.
 
 ## Deal State and Predicate Mapping
 
@@ -109,11 +113,12 @@ machine, not the ledger).
     -> submitted to Horizon -> ledger confirms -> balanceId recorded on Deal
 
  2. MONITOR
-    Backend opens a Horizon SSE stream on
-      GET /claimable_balances?claimant=<buyer|seller>
-    (falls back to polling GET /claimable_balances/{id} if streaming is
-    unavailable) and updates Deal.status whenever the balance disappears
-    from the ledger (claimed or reclaimed) or a deadline passes.
+    Backend polls GET /claimable_balances/{balanceId} on an interval.
+    While it 200s, the deposit is still PENDING. A 404 means the balance
+    was claimed — since the seller/buyer predicates are mutually exclusive
+    by time (see table above), the monitor infers which outcome occurred
+    from whether "now" is before or at/after closingDeadline, and updates
+    Deal.status accordingly.
 
  3a. RESOLVE — successful claim
      Before closingDeadline: seller keypair signs

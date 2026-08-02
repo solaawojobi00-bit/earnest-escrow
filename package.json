@@ -11,7 +11,7 @@
     "build": "tsc -p tsconfig.json",
     "demo:claim": "ts-node src/scripts/demo-successful-claim.ts",
     "demo:reclaim": "ts-node src/scripts/demo-reclaim-after-deadline.ts",
-    "test": "node --test --require ts-node/register test/**/*.test.ts"
+    "test": "node --require ts-node/register --test test/dealStore.test.ts"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^16.2.0",
